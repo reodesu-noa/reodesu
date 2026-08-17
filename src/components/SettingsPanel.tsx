@@ -143,6 +143,9 @@ export function SettingsPanel({
                   checked={draft.over40}
                   onChange={(v) => update("over40", v)}
                 />
+                <p className="text-[11px] leading-relaxed text-muted">
+                  ※ 子ども・子育て拠出金（{"0.12"}%）も自動的に控除に含まれます
+                </p>
               </div>
             )}
           </div>
@@ -169,7 +172,7 @@ export function SettingsPanel({
           <div className="space-y-3">
             <p className="text-xs text-muted">所得税（源泉徴収）の概算方法</p>
             <div className="flex gap-2">
-              {(["kou", "otsu"] as TaxType[]).map((t) => (
+              {(["kou", "otsu", "flat"] as TaxType[]).map((t) => (
                 <button
                   key={t}
                   type="button"
@@ -180,7 +183,7 @@ export function SettingsPanel({
                       : "border-line text-muted hover:text-foreground"
                   }`}
                 >
-                  {t === "kou" ? "甲欄" : "乙欄"}
+                  {t === "kou" ? "甲欄" : t === "otsu" ? "乙欄" : "定率"}
                 </button>
               ))}
             </div>
@@ -191,6 +194,11 @@ export function SettingsPanel({
                 onChange={(v) => update("dependents", v)}
                 suffix="人"
               />
+            )}
+            {draft.tax_type === "flat" && (
+              <p className="text-[11px] leading-relaxed text-muted">
+                総支給額の1.3%を所得税として概算します。
+              </p>
             )}
 
             <div className="rounded-lg bg-surface-raised p-3">

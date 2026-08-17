@@ -4,6 +4,13 @@ import { Settings, Shift } from "./types";
 // 無いため、令和6年度の全国健康保険協会 目安値を固定値として扱う。
 export const KAIGO_HOKEN_RATE = 1.6; // %
 
+// 子ども・子育て拠出金率。settingsテーブルに専用カラムが無いため固定値として扱う。
+// 社会保険加入時のみ、総支給額に対してそのまま適用する（労使折半のような÷2はしない）。
+export const KOSODATE_SHIEN_RATE = 0.12; // %
+
+// 所得税を「総支給額に対する定率」で概算する場合の固定税率。
+export const FLAT_TAX_RATE = 1.3; // %
+
 const NIGHT_START_HOUR = 22; // 22:00
 const NIGHT_END_HOUR = 5; // 翌5:00
 
@@ -65,6 +72,7 @@ export interface Deductions {
   health: number;
   pension: number;
   koyou: number;
+  kosodate: number;
   tax: number;
   total: number;
 }
@@ -85,6 +93,10 @@ function calcIncomeTax(grossPay: number, socialInsuranceTotal: number, settings:
     return settings.tax_override;
   }
   const base = Math.max(0, grossPay - socialInsuranceTotal);
+
+  if (settings.tax_type === "flat") {
+    return grossPay * (FLAT_TAX_RATE / 100);
+  }
 
   if (settings.tax_type === "otsu") {
     return base * 0.03063;
@@ -122,16 +134,18 @@ export function computeMonthlyPayroll(shifts: Shift[], settings: Settings): Payr
   }
 
   const koyou = settings.enrolled_koyou ? (grossPay * settings.koyou_rate) / 100 : 0;
+  const kosodate = settings.enrolled_shakai_hoken ? (grossPay * KOSODATE_SHIEN_RATE) / 100 : 0;
 
-  const socialInsuranceTotal = health + pension + koyou;
+  const socialInsuranceTotal = health + pension + koyou + kosodate;
   const tax = Math.max(0, calcIncomeTax(grossPay, socialInsuranceTotal, settings));
 
   const deductions: Deductions = {
     health,
     pension,
     koyou,
+    kosodate,
     tax,
-    total: health + pension + koyou + tax,
+    total: health + pension + koyou + kosodate + tax,
   };
 
   const netPay = grossPay - deductions.total;

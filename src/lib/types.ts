@@ -10,7 +10,7 @@ export interface Shift {
 
 export type NewShift = Pick<Shift, "date" | "start_time" | "end_time" | "break_min">;
 
-export type TaxType = "kou" | "otsu";
+export type TaxType = "kou" | "otsu" | "flat";
 
 export interface Settings {
   user_id: string;

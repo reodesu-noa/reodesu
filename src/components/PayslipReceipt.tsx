@@ -85,6 +85,7 @@ export function PayslipReceipt({
         <Row label="健康保険料" value={`-${formatYen(summary.deductions.health)}`} />
         <Row label="厚生年金保険料" value={`-${formatYen(summary.deductions.pension)}`} />
         <Row label="雇用保険料" value={`-${formatYen(summary.deductions.koyou)}`} />
+        <Row label="子育て支援金" value={`-${formatYen(summary.deductions.kosodate)}`} />
         <Row label="所得税" value={`-${formatYen(summary.deductions.tax)}`} sub="概算" />
         <Row label="控除合計" value={`-${formatYen(summary.deductions.total)}`} emphasis />
       </div>
