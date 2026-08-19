@@ -16,10 +16,14 @@ export function AppShell() {
   const [month, setMonth] = useState(currentYearMonth());
   const [tab, setTab] = useState<Tab>("payslip");
 
-  const { shifts, loading: shiftsLoading, error: shiftsError, addShift, deleteShift } = useShifts(
-    user?.id ?? null,
-    month
-  );
+  const {
+    shifts,
+    loading: shiftsLoading,
+    error: shiftsError,
+    addShift,
+    addShifts,
+    deleteShift,
+  } = useShifts(user?.id ?? null, month);
   const { settings, loading: settingsLoading, saveSettings } = useSettings(user?.id ?? null);
 
   return (
@@ -78,6 +82,7 @@ export function AppShell() {
             loading={shiftsLoading}
             error={shiftsError}
             onAdd={addShift}
+            onAddMany={addShifts}
             onDelete={deleteShift}
           />
         )}

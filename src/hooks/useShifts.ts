@@ -50,6 +50,22 @@ export function useShifts(userId: string | null, month: YearMonth) {
     [userId, refresh]
   );
 
+  const addShifts = useCallback(
+    async (newShifts: NewShift[]) => {
+      if (!userId || newShifts.length === 0) return false;
+      const { error } = await supabase
+        .from("shifts")
+        .insert(newShifts.map((s) => ({ ...s, user_id: userId })));
+      if (error) {
+        setError(error.message);
+        return false;
+      }
+      await refresh();
+      return true;
+    },
+    [userId, refresh]
+  );
+
   const deleteShift = useCallback(
     async (id: string) => {
       const { error } = await supabase.from("shifts").delete().eq("id", id);
@@ -63,5 +79,5 @@ export function useShifts(userId: string | null, month: YearMonth) {
     []
   );
 
-  return { shifts, loading, error, refresh, addShift, deleteShift };
+  return { shifts, loading, error, refresh, addShift, addShifts, deleteShift };
 }

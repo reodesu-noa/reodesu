@@ -6,6 +6,7 @@ import { YearMonth } from "@/lib/date";
 import { ShiftForm } from "./ShiftForm";
 import { ShiftList } from "./ShiftList";
 import { ShiftCalendar } from "./ShiftCalendar";
+import { ShiftImageImport } from "./ShiftImageImport";
 
 type ViewMode = "list" | "calendar";
 
@@ -15,6 +16,7 @@ export function ShiftsTab({
   loading,
   error,
   onAdd,
+  onAddMany,
   onDelete,
 }: {
   month: YearMonth;
@@ -22,6 +24,7 @@ export function ShiftsTab({
   loading: boolean;
   error: string | null;
   onAdd: (shift: NewShift) => Promise<boolean | void>;
+  onAddMany: (shifts: NewShift[]) => Promise<boolean | void>;
   onDelete: (id: string) => Promise<boolean | void>;
 }) {
   const [view, setView] = useState<ViewMode>("list");
@@ -29,6 +32,7 @@ export function ShiftsTab({
   return (
     <div className="space-y-4">
       <ShiftForm onAdd={onAdd} />
+      <ShiftImageImport onAddShifts={onAddMany} />
 
       {error && (
         <p className="rounded-lg border border-danger/30 bg-danger/10 px-3 py-2 text-sm text-danger">
